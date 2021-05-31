@@ -1,17 +1,24 @@
 import express from "express";
+import morgan from "morgan";
+import { errorMiddleware } from "./middlewares/errorMiddleware";
 
 // this is all it takes to enable async/await for express middleware
-
 import "express-async-errors";
-
 import logger from "loglevel";
 
 // all the routes for my app are retrieved from the src/routes/index.js module
-
 import { getRoutes } from "./routes";
 
 function startServer({ port = process.env.PORT } = {}) {
   const app = express();
+
+  //Body parser
+  app.use(express.json());
+
+  //DEVELOPMENT logging middleware
+  if (process.env.NODE_ENV === "development") {
+    app.use(morgan("dev"));
+  }
 
   // mount entire app to the /api route
   app.use("/api", getRoutes());
@@ -41,25 +48,6 @@ function startServer({ port = process.env.PORT } = {}) {
       resolve(server);
     });
   });
-}
-
-// here's our generic error handler for situations where we didn't handle
-// errors properly
-function errorMiddleware(error, req, res, next) {
-  if (res.headersSent) {
-    next(error);
-  } else {
-    logger.error(error);
-    res.status(500);
-    res.json({
-      message: error.message,
-      // we only add a `stack` property in non-production environments
-
-      ...(process.env.NODE_ENV === "production"
-        ? null
-        : { stack: error.stack }),
-    });
-  }
 }
 
 // ensures we close the server in the event of an error.
