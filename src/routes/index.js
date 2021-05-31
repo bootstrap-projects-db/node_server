@@ -2,14 +2,14 @@ import express from "express";
 
 // any other routes imports would go here
 
-import { getMathRoutes } from "./math";
+import { getUsersRoutes } from "./users";
 
 function getRoutes() {
   // create a router for all the routes of our app
 
   const router = express.Router();
 
-  router.use("/math", getMathRoutes());
+  router.use("/users", getUsersRoutes());
 
   // any additional routes would go here
 
