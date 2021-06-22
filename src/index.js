@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import logger from "loglevel";
-import { startServer } from "./start";
+import { startServer } from "./api/start";
 import { startDB } from "./db";
 import "colors";
 

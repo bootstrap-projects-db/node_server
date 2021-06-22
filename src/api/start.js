@@ -1,13 +1,13 @@
 import express from "express";
 import morgan from "morgan";
-import { errorMiddleware } from "./middlewares/errorMiddleware";
+import { errorMiddleware } from "./v1/middlewares/errorMiddleware";
 
 // this is all it takes to enable async/await for express middleware
 import "express-async-errors";
 import logger from "loglevel";
 
 // all the routes for my app are retrieved from the src/routes/index.js module
-import { getRoutes } from "./routes";
+import { getRoutes } from "./v1/routes";
 
 function startServer({ port = process.env.PORT } = {}) {
   const app = express();
