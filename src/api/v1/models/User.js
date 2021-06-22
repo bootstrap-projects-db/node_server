@@ -29,6 +29,8 @@ const UserSchema = new Schema({
     //dont show password when returning a user model instance
     select: false,
   },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
   createdAt: {
     type: Date,
     default: Date.now,
