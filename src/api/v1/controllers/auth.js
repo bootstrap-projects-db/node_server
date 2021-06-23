@@ -10,10 +10,7 @@ export const register = asyncHandler(async (req, res, next) => {
   // create user
   const user = await User.create({ name, email, password, role });
 
-  // create token
-  const token = user.getSignedToken();
-
-  res.status(200).json({ success: true, token });
+  sendTokenResponse(user, 200, res);
 });
 
 // @desc    Login user
@@ -41,8 +38,31 @@ export const login = asyncHandler(async (req, res, next) => {
     return next(new CustomError("Invalid credentials", 401));
   }
 
+  sendTokenResponse(user, 200, res);
+});
+
+// get token from model create cookie and send response
+const sendTokenResponse = (user, statusCode, res) => {
   // create token
   const token = user.getSignedToken();
 
-  res.status(200).json({ success: true, token });
-});
+  // cookie options
+  const options = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    // cookie only accessible through client side scripts
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === "production") {
+    // if secure is true -> cookie will be sent with https
+    options.secure = true;
+  }
+
+  res
+    .status(statusCode)
+    // set cookie in response with a token variable
+    .cookie("token", token, options)
+    .json({ success: true, token });
+};

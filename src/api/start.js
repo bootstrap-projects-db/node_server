@@ -5,6 +5,7 @@ import errorMiddleware from "./v1/middlewares/errorMiddleware";
 // this is all it takes to enable async/await for express middleware
 import "express-async-errors";
 import logger from "loglevel";
+import cookieParser from "cookie-parser";
 
 // all the routes for my app are retrieved from the src/api/v1/routes/index.js module
 import { getRoutes } from "./v1/routes";
@@ -14,6 +15,9 @@ function startServer({ port = process.env.PORT } = {}) {
 
   //Body parser
   app.use(express.json());
+
+  // cookie parser
+  app.use(cookieParser());
 
   //DEVELOPMENT logging middleware
   if (process.env.NODE_ENV === "development") {
