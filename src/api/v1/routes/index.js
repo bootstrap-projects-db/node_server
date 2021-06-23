@@ -4,6 +4,7 @@ import express from "express";
 
 import { getUsersRoutes } from "./users";
 import { getAuthRoutes } from "./auth";
+import { getEventRoutes } from "./events";
 
 function getRoutes() {
   // create a router for all the routes of our app
@@ -12,6 +13,7 @@ function getRoutes() {
 
   router.use("/users", getUsersRoutes());
   router.use("/auth", getAuthRoutes());
+  router.use("/events", getEventRoutes());
 
   // any additional routes would go here
 
