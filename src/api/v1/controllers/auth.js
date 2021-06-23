@@ -4,6 +4,7 @@ import CustomError from "../utils/customError";
 
 // @desc    Register user
 // @route   POST /api/v1/auth/register
+// @access  public
 export const register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role } = req.body;
 
@@ -15,6 +16,7 @@ export const register = asyncHandler(async (req, res, next) => {
 
 // @desc    Login user
 // @route   POST /api/v1/auth/login
+// @access  public
 export const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -39,6 +41,16 @@ export const login = asyncHandler(async (req, res, next) => {
   }
 
   sendTokenResponse(user, 200, res);
+});
+
+// @desc    Get logged in user
+// @route   GET /api/v1/auth/current-user
+// @access  private
+export const currentUser = asyncHandler(async (req, res, next) => {
+  // create user
+  const user = await User.findById(req.user.id);
+
+  res.status(200).json({ success: true, data: { user } });
 });
 
 // get token from model create cookie and send response
