@@ -53,6 +53,28 @@ export const currentUser = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: { user } });
 });
 
+// @desc    Get logged in user
+// @route   POST /api/v1/auth/forgotpassword
+// @access  public
+export const forgotPassword = asyncHandler(async (req, res, next) => {
+  // create user
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new CustomError("There is no user with that email", 401));
+  }
+
+  // set resetPasswordToken at the user
+  const resetToken = user.getResetPasswordToken();
+
+  // save generated resetPasswordToken to db
+  await user.save({ validateBeforeSave: false });
+
+  console.log("reset token:", resetToken);
+
+  res.status(200).json({ success: true, data: { user } });
+});
+
 // get token from model create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
   // create token

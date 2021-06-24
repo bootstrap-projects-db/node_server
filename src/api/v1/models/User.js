@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
@@ -72,6 +73,22 @@ UserSchema.methods.format = function () {
 //match user password from request to hashed password in db
 UserSchema.methods.matchPassword = async function (requestPassword) {
   return await bcrypt.compare(requestPassword, this.password);
+};
+
+// generate and hash password token
+UserSchema.methods.getResetPasswordToken = async function () {
+  // generate token
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  // hash token and set to resetPasswordToken field
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 10000;
+
+  return resetToken;
 };
 
 export default mongoose.model("User", UserSchema);

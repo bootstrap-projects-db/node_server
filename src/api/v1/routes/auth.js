@@ -1,5 +1,10 @@
 import express from "express";
-import { register, login, currentUser } from "../controllers/auth";
+import {
+  register,
+  login,
+  currentUser,
+  forgotPassword,
+} from "../controllers/auth";
 import { protect } from "../middlewares/protect";
 
 function getAuthRoutes() {
@@ -8,6 +13,7 @@ function getAuthRoutes() {
   router.post("/register", register);
   router.post("/login", login);
   router.get("/current-user", protect, currentUser);
+  router.post("/forgotpassword", forgotPassword);
 
   return router;
 }
