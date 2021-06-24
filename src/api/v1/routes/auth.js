@@ -4,6 +4,7 @@ import {
   login,
   currentUser,
   forgotPassword,
+  resetPassword,
 } from "../controllers/auth";
 import { protect } from "../middlewares/protect";
 
@@ -14,6 +15,7 @@ function getAuthRoutes() {
   router.post("/login", login);
   router.get("/current-user", protect, currentUser);
   router.post("/forgotpassword", forgotPassword);
+  router.put("/resetpassword/:resettoken", resetPassword);
 
   return router;
 }

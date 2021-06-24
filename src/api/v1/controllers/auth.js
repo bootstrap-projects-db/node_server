@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import User from "../models/User";
 import asyncHandler from "../middlewares/asyncHandler";
 import CustomError from "../utils/customError";
@@ -76,7 +77,7 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
   // create reset url
   const resetUrl = `${req.protocol}://${req.get(
     "host"
-  )}/api/v1/resetpassword/${resetToken}`;
+  )}/api/v1/auth/resetpassword/${resetToken}`;
 
   const message = `You are receiving this email bacause you (or someone else) has requested the reset of password. Please make a POST request to: \n\n ${resetUrl} `;
 
@@ -99,6 +100,40 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
   }
 
   res.status(200).json({ success: true, data: "Email sent!" });
+});
+
+// @desc    Reset password
+// @route   PUT /api/v1/auth/resetpassword/:resettoken
+// @access  private
+export const resetPassword = asyncHandler(async (req, res, next) => {
+  // get hashed token
+  // const resetPasswordToken = crypto
+  //   .createHash("sha256")
+  //   .update(req.params.resettoken)
+  //   .digest("hex");
+  const resetPasswordToken = req.params.resettoken;
+
+  console.log("reset pw", req.params.resettoken);
+  console.log("is string", typeof req.params.resettoken);
+  // create user
+  const user = await User.findOne({
+    resetPasswordToken: "dbddaad0584211fdf54f1b8481c01025d4a9996b",
+  });
+
+  console.log("user", user);
+
+  if (!user) {
+    return next(new CustomError("Invalid token", 400));
+  }
+
+  // set new password
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+
+  await user.save();
+
+  sendTokenResponse(user, 200, res);
 });
 
 // get token from model create cookie and send response
