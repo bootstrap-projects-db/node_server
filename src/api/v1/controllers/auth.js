@@ -70,7 +70,7 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
   // save generated resetPasswordToken to db
   await user.save({ validateBeforeSave: false });
 
-  console.log("reset token:", resetToken);
+  // console.log("reset token:", resetToken);
 
   res.status(200).json({ success: true, data: { user } });
 });
