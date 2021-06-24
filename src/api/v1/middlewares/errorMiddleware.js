@@ -7,7 +7,7 @@ const errorMiddleware = (err, req, res, next) => {
 
   //  Log to console for developers
   //    console.log(err.stack.red);
-  console.log(err);
+  // console.log(err);
 
   //  name of the error
   //    console.log(err.name);

@@ -1,10 +1,10 @@
 import express from "express";
-import { protect } from "../middlewares/protect";
+import { protect, authorize } from "../middlewares/protect";
 
 function getEventRoutes() {
   const router = express.Router();
 
-  router.get("/", protect, (req, res, next) => {
+  router.get("/", protect, authorize("MEMBER"), (req, res, next) => {
     res.send("events");
   });
 
