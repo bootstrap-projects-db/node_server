@@ -1,6 +1,7 @@
 import User from "../models/User";
 import asyncHandler from "../middlewares/asyncHandler";
 import CustomError from "../utils/customError";
+import sendEmail from "../utils/sendEmail";
 
 // @desc    Register user
 // @route   POST /api/v1/auth/register
@@ -72,7 +73,32 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
 
   // console.log("reset token:", resetToken);
 
-  res.status(200).json({ success: true, data: { user } });
+  // create reset url
+  const resetUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/resetpassword/${resetToken}`;
+
+  const message = `You are receiving this email bacause you (or someone else) has requested the reset of password. Please make a POST request to: \n\n ${resetUrl} `;
+
+  try {
+    await sendEmail({
+      recievers: user.email,
+      subject: "Password reset token",
+      message,
+    });
+  } catch (error) {
+    console.log(error);
+
+    // reset password token
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    return next(new CustomError("Email could not be sent."));
+  }
+
+  res.status(200).json({ success: true, data: "Email sent!" });
 });
 
 // get token from model create cookie and send response
