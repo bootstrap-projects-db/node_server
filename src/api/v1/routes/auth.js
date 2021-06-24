@@ -5,6 +5,8 @@ import {
   currentUser,
   forgotPassword,
   resetPassword,
+  updateDetails,
+  updatePassword,
 } from "../controllers/auth";
 import { protect } from "../middlewares/protect";
 
@@ -14,6 +16,8 @@ function getAuthRoutes() {
   router.post("/register", register);
   router.post("/login", login);
   router.get("/current-user", protect, currentUser);
+  router.put("/updatedetails", protect, updateDetails);
+  router.put("/updatepassword", protect, updatePassword);
   router.post("/forgotpassword", forgotPassword);
   router.put("/resetpassword/:resettoken", resetPassword);
 
