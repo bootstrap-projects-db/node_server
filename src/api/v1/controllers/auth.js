@@ -51,8 +51,16 @@ export const login = asyncHandler(async (req, res, next) => {
 export const currentUser = asyncHandler(async (req, res, next) => {
   // create user
   const user = await User.findById(req.user.id);
+  console.log("User:", user);
 
-  res.status(200).json({ success: true, data: { user } });
+  const userResult = {
+    _id: user._id,
+    email: user.email,
+    name: user.name,
+    createdAt: user.createdAt,
+  };
+
+  res.status(200).json({ success: true, data: userResult });
 });
 
 // @desc    Update user details
@@ -173,6 +181,17 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
   await user.save();
 
   sendTokenResponse(user, 200, res);
+});
+
+// @desc    Upload image for current user
+// @route   PUT /api/v1/auth/image
+// @access  private
+export const currentUserImageUpload = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  if (!req.files) {
+    return next(new CustomError(`Please upload a file`, 400));
+  }
 });
 
 // get token from model create cookie and send response

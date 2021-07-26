@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import errorMiddleware from "./v1/middlewares/errorMiddleware";
+import fileUpload from "express-fileupload";
 
 // this is all it takes to enable async/await for express middleware
 import "express-async-errors";
@@ -23,6 +24,9 @@ function startServer({ port = process.env.PORT } = {}) {
   if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
   }
+
+  // File uploading
+  app.use(fileUpload());
 
   // mount entire app to the /api route
   app.use("/api/v1", getRoutes());

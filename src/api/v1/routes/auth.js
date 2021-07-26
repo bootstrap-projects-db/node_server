@@ -7,6 +7,7 @@ import {
   resetPassword,
   updateDetails,
   updatePassword,
+  currentUserImageUpload,
 } from "../controllers/auth";
 import { protect } from "../middlewares/protect";
 
@@ -20,6 +21,7 @@ function getAuthRoutes() {
   router.put("/updatepassword", protect, updatePassword);
   router.post("/forgotpassword", forgotPassword);
   router.put("/resetpassword/:resettoken", resetPassword);
+  router.put("/image", protect, currentUserImageUpload);
 
   return router;
 }
