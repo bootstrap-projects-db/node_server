@@ -58,6 +58,7 @@ export const currentUser = asyncHandler(async (req, res, next) => {
     _id: user._id,
     email: user.email,
     name: user.name,
+    image: user.image,
     createdAt: user.createdAt,
   };
 
@@ -188,6 +189,7 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
 // @route   PUT /api/v1/auth/image
 // @access  private
 export const currentUserImageUpload = asyncHandler(async (req, res, next) => {
+  console.log(req.files);
   const user = await User.findById(req.user.id);
 
   if (!req.files) {
@@ -203,6 +205,7 @@ export const currentUserImageUpload = asyncHandler(async (req, res, next) => {
 
   // create custom file name
   file.name = `user_image_${req.user.id}${path.parse(file.name).ext}`;
+  console.log(file);
 
   file.mv(
     `${process.env.FILE_UPLOAD_PATH}/users/${file.name}`,
@@ -213,7 +216,7 @@ export const currentUserImageUpload = asyncHandler(async (req, res, next) => {
         return next(new CustomError(`Error on file upload`, 500));
       }
 
-      const absoluteImagePath = `http://localhost:5500/uploads/users/${file.name}`;
+      const absoluteImagePath = `/uploads/users/${file.name}`;
 
       await User.findByIdAndUpdate(req.user.id, { image: absoluteImagePath });
 
