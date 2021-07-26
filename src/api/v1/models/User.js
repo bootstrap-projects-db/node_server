@@ -18,6 +18,10 @@ const UserSchema = new Schema({
       "Please add a valid email",
     ],
   },
+  image: {
+    type: String,
+    default: "no-image.jpg",
+  },
   role: {
     type: String,
     enum: ["ADMIN", "MEMBER", "GUEST"],

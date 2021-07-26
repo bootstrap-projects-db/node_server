@@ -1,3 +1,4 @@
+import path from "path";
 import crypto from "crypto";
 import User from "../models/User";
 import asyncHandler from "../middlewares/asyncHandler";
@@ -192,6 +193,38 @@ export const currentUserImageUpload = asyncHandler(async (req, res, next) => {
   if (!req.files) {
     return next(new CustomError(`Please upload a file`, 400));
   }
+
+  const file = req.files.file;
+
+  // make sure request body data is image
+  if (!file.mimetype.startsWith("image")) {
+    return next(new CustomError(`Please upload an image file`, 400));
+  }
+
+  // create custom file name
+  file.name = `user_image_${req.user.id}${path.parse(file.name).ext}`;
+
+  file.mv(
+    `${process.env.FILE_UPLOAD_PATH}/users/${file.name}`,
+    async (error) => {
+      if (error) {
+        console.log(error);
+
+        return next(new CustomError(`Error on file upload`, 500));
+      }
+
+      const absoluteImagePath = `http://localhost:5500/uploads/users/${file.name}`;
+
+      await User.findByIdAndUpdate(req.user.id, { image: absoluteImagePath });
+
+      res.status(200).json({
+        success: true,
+        data: absoluteImagePath,
+      });
+    }
+  );
+
+  console.log(file.name);
 });
 
 // get token from model create cookie and send response

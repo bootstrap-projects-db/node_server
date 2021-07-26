@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import morgan from "morgan";
 import errorMiddleware from "./v1/middlewares/errorMiddleware";
@@ -27,6 +28,9 @@ function startServer({ port = process.env.PORT } = {}) {
 
   // File uploading
   app.use(fileUpload());
+
+  // set static folder
+  app.use(express.static(path.join(__dirname, "../../public")));
 
   // mount entire app to the /api route
   app.use("/api/v1", getRoutes());
